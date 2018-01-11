@@ -26,6 +26,7 @@ public:
     void setOptions(std::vector<short> options);
 
     void printLine(unsigned int definedLine, unsigned int valueLine);
+    void printBit(unsigned int data);
 private:
     std::vector<short> m_options;
     int m_definedLine;

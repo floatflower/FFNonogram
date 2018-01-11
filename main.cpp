@@ -16,10 +16,10 @@ int main(int argc, char **argv) {
         n.run();
     }
 
-    /*unsigned int definedLine = 1073741824;
-    unsigned int valueLine = 1073741824;
+    /*unsigned int definedLine = 0;
+    unsigned int valueLine = 0;
     std::vector<short> options;
-    options.push_back(3);
+    options.push_back(1);
     options.push_back(1);
     LineSolver solver;
     solver.setOptions(options);
