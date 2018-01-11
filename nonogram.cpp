@@ -1,5 +1,9 @@
 #include "nonogram.h"
 
+#include <iostream>
+
+#include "macro.h"
+
 /** ========================================================
 
 PLAYGROUND_SIZE is the size of playground,
@@ -13,7 +17,7 @@ Also, we can access data with real index, point(1, 1) will access [1][1].
 (n, 0) and (0, n) is for extra hidden bits.
 
 ========================================================= */
-#define PLAYGROUND_SIZE 6
+#include "macro.h"
 
 Nonogram::Nonogram()
 {
@@ -35,7 +39,27 @@ void Nonogram::initPlayGround()
 	}
 }
 
+void Nonogram::setOption(std::vector<std::vector<short>> options)
+{
+    m_options = options;
+}
+
 void Nonogram::run()
 {
+    propagate();
+}
 
+void Nonogram::propagate()
+{
+    // Do init playground rows
+    // pass 1 ~ playground size
+    for (int i = 1; i < PLAYGROUND_SIZE; i ++) {
+        m_solver.setOptions(m_options.at(i - 1));
+        m_solver.sovle(this->m_definedPlayGround[i], this->m_valuePlayGround[i]);
+    }
+    // flips
+    // Do playground columns
+    // flips back
+
+    // Start to solve workList
 }

@@ -1,24 +1,37 @@
 #ifndef LINESOVER_H
 #define LINESOVER_H
 
+#include <vector>
+
 class LineSolver {
 public:
 	
 	LineSolver();
 	~LineSolver();
-	void setLine(int definedLine, int valueLine);
-	bool sovle();
+    bool sovle(unsigned int &definedLine, unsigned int &valueLine);
 
-	bool paint(int row, int col, int line);
-	bool paintp(int row, int col, int line);
-	int paint0(int row, int col, int line);
-	int paint1(int row, int col, int line);
+    bool paint(int i, int j, unsigned int &definedLine, unsigned int &valueLine);
+    bool paintp(int i, int j, unsigned int &definedLine, unsigned int &valueLine);
+    void paint0(int i, int j, unsigned int &definedLine, unsigned int &valueLine);
+    void paint1(int i, int j, unsigned int &definedLine, unsigned int &valueLine);
 
-	bool fix(int row, int col, int line);
-	bool fix0(int row, int col, int line);
-	bool fix1(int row, int col, int line);
+    bool fix(int i, int j, unsigned int definedLine, unsigned int valueLine);
+    bool fix0(int i, int j, unsigned int definedLine, unsigned int valueLine);
+    bool fix1(int i, int j, unsigned int definedLine, unsigned int valueLine);
 
-	int merge(int line1, int line2); 
+    void merge(unsigned int &targetDefinedLine, unsigned int &targetValueLine,
+               unsigned int &definedLine0, unsigned int &valueLine0,
+               unsigned int &definedLine1, unsigned int &valueLine1);
+
+    void setOptions(std::vector<short> options);
+
+    inline bool getBit(unsigned int data, int position);
+
+    void printLine(unsigned int definedLine, unsigned int valueLine);
+private:
+    std::vector<short> m_options;
+    int m_definedLine;
+    int m_valueLine;
 };
 
 #endif LINESOVER_H

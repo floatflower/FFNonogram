@@ -8,7 +8,12 @@ TARGET = ffnonogram
 
 SOURCES += main.cpp \
 		   nonogram.cpp \
-		   linesolver.cpp
+		   linesolver.cpp \
+    inputreader.cpp \
+    worklist.cpp
 
 HEADERS += nonogram.h \
-		   linesovler.h	
+    linesolver.h \
+    inputreader.h \
+    macro.h \
+    worklist.h
