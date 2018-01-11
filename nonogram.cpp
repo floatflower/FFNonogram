@@ -54,8 +54,8 @@ void Nonogram::propagate()
 {
     // Do init playground rows
     // pass 1 ~ playground size
-    for (int i = 1; i < PLAYGROUND_SIZE; i ++) {
-        m_solver.setOptions(m_options.at(i - 1));
+    for (int i = 0; i < PLAYGROUND_SIZE; i ++) {
+        m_solver.setOptions(m_options.at(i));
         m_solver.sovle(this->m_definedPlayGround[i], this->m_valuePlayGround[i]);
         m_solver.printLine(this->m_definedPlayGround[i], this->m_valuePlayGround[i]);
     }

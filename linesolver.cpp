@@ -53,7 +53,7 @@ LineSolver::~LineSolver()
 
 bool LineSolver::sovle(unsigned int &definedLine, unsigned int &valueLine)
 {
-    int lineLength = PLAYGROUND_SIZE - 1;
+    int lineLength = PLAYGROUND_SIZE;
     int optionsAmount = m_options.size();
     unsigned int tmp_definedLine = definedLine;
     unsigned int tmp_valueLine = valueLine;
@@ -206,7 +206,7 @@ void LineSolver::setOptions(std::vector<short> options)
 
 void LineSolver::printLine(unsigned int definedLine, unsigned int valueLine)
 {
-    for (int i = 0; i < PLAYGROUND_SIZE - 1; i ++) {
+    for (int i = 0; i < PLAYGROUND_SIZE; i ++) {
         if (GET_BIT(definedLine, i))
         {
             GET_BIT(valueLine, i) ? std::cout << "1 " : std::cout << "0 ";
