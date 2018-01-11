@@ -47,6 +47,7 @@ void Nonogram::setOption(std::vector<std::vector<short>> options)
 void Nonogram::run()
 {
     propagate();
+    std::cout << "---------------------" << std::endl;
 }
 
 void Nonogram::propagate()
@@ -56,6 +57,7 @@ void Nonogram::propagate()
     for (int i = 1; i < PLAYGROUND_SIZE; i ++) {
         m_solver.setOptions(m_options.at(i - 1));
         m_solver.sovle(this->m_definedPlayGround[i], this->m_valuePlayGround[i]);
+        m_solver.printLine(this->m_definedPlayGround[i], this->m_valuePlayGround[i]);
     }
     // flips
     // Do playground columns

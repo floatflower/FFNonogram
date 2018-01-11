@@ -25,8 +25,6 @@ public:
 
     void setOptions(std::vector<short> options);
 
-    inline bool getBit(unsigned int data, int position);
-
     void printLine(unsigned int definedLine, unsigned int valueLine);
 private:
     std::vector<short> m_options;
