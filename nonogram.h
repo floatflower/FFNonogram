@@ -21,12 +21,14 @@ public:
     	m_definedPlayGround = definedLine;
     	m_valuePlayGround = valueLine;
     }
+    void fp1();
 private:
 
 	unsigned int *m_definedPlayGround;
 	unsigned int *m_valuePlayGround;
     std::vector<std::vector<short>> m_options;
     LineSolver m_solver;
+    bool m_isComplete;
 
 };
 

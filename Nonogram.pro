@@ -10,10 +10,12 @@ SOURCES += main.cpp \
 		   nonogram.cpp \
 		   linesolver.cpp \
     inputreader.cpp \
-    worklist.cpp
+    worklist.cpp \
+    fixcache.cpp
 
 HEADERS += nonogram.h \
     linesolver.h \
     inputreader.h \
     macro.h \
-    worklist.h
+    worklist.h \
+    fixcache.h

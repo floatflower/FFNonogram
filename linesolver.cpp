@@ -4,16 +4,22 @@
 
 #include "macro.h"
 
-
-
 LineSolver::LineSolver()
+    : m_complete(false)
 {
-
+    
 }
 
 LineSolver::~LineSolver()
 {
 
+}
+
+void LineSolver::init()
+{
+    m_fix1Cache.init();
+    m_fix0Cache.init();
+    m_complete = false;
 }
 
 bool LineSolver::sovle(unsigned int &definedLine, unsigned int &valueLine)
@@ -25,6 +31,7 @@ bool LineSolver::sovle(unsigned int &definedLine, unsigned int &valueLine)
     bool result = paint(lineLength, optionsAmount, tmp_definedLine, tmp_valueLine);
     definedLine = tmp_definedLine;
     valueLine = tmp_valueLine;
+    m_complete = ((definedLine | completeChecker[PLAYGROUND_SIZE]) == 0xFFFFFFFF);
     return result;
 }
 
@@ -110,9 +117,27 @@ bool LineSolver::fix(int i, int j, unsigned int definedLine, unsigned int valueL
     if (i == 0 && j >= 1) return false;
     if (i < 0) return false;
     else {
-	    bool fix0Result = fix0(i, j, definedLine, valueLine);
+
+	    bool fix0Result;
+        if (m_fix0Cache.hasResult(i, j)) {
+            fix0Result = m_fix0Cache.fixResult(i, j);
+        }
+        else {
+            fix0Result = fix0(i, j, definedLine, valueLine);
+            m_fix0Cache.setFixResult(i, j, fix0Result);    
+        }
+
 	 	//std::cout << "fix0(" << i << ", " << j << ") = " << fix0Result << std::endl;   
-	    bool fix1Result = fix1(i, j, definedLine, valueLine);
+
+	    bool fix1Result;
+        if (m_fix1Cache.hasResult(i, j)) {
+            fix1Result = m_fix1Cache.fixResult(i, j);
+        }
+        else {
+            fix1Result = fix1(i, j, definedLine, valueLine);
+            m_fix1Cache.setFixResult(i, j, fix1Result);       
+        }
+        
 	    //std::cout << "fix1(" << i << ", " << j << ") = " << fix1Result << std::endl;   	
 	    return fix0Result || fix1Result;
     } 

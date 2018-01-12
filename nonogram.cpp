@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-#include "macro.h"
-
 /** ========================================================
 
 PLAYGROUND_SIZE is the size of playground,
@@ -18,11 +16,13 @@ Also, we can access data with real index, point(1, 1) will access [1][1].
 
 ========================================================= */
 #include "macro.h"
+#include "worklist.h"
 
 Nonogram::Nonogram()
 {
 	this->m_definedPlayGround = new unsigned int [PLAYGROUND_SIZE];
 	this->m_valuePlayGround = new unsigned int [PLAYGROUND_SIZE];
+    m_isComplete = true;
 }
 
 Nonogram::~Nonogram()
@@ -37,6 +37,8 @@ void Nonogram::initPlayGround()
 		this->m_definedPlayGround[i] = 0;
 		this->m_valuePlayGround[i] = 0;
 	}
+    m_isComplete = true;
+    WorkList::instance()->init();
 }
 
 void Nonogram::setOption(std::vector<std::vector<short>> options)
@@ -46,7 +48,7 @@ void Nonogram::setOption(std::vector<std::vector<short>> options)
 
 void Nonogram::run()
 {
-    propagate();
+    fp1();
     std::cout << "=========================================================================" << std::endl;
 }
 
@@ -54,7 +56,9 @@ void Nonogram::propagate()
 {
     // Do init playground rows
     // pass 1 ~ playground size
+    m_isComplete = true;
     for (int i = 0; i < INPUTDATA_ROWS; i ++) {
+        m_solver.init();
         if (i < PLAYGROUND_SIZE) {
             m_solver.setOptions(m_options.at(i));
             m_solver.sovle(this->m_definedPlayGround[i], this->m_valuePlayGround[i]);
@@ -67,7 +71,7 @@ void Nonogram::propagate()
             m_solver.sovle(definedLine, valueLine);
             setColumn(i, definedLine, valueLine);
         }
-
+        m_isComplete &= m_solver.isCompleted();
     }
     printPlayGround();
     // flips
@@ -108,5 +112,15 @@ void Nonogram::printPlayGround()
 {
     for (int i = 0; i < PLAYGROUND_SIZE; i ++) {
         m_solver.printLine(this->m_definedPlayGround[i], this->m_valuePlayGround[i]);
+    }
+    m_isComplete ? std::cout << "Result: Finished" << std::endl : std::cout << "Result: UnFinished" << std::endl;
+    
+}
+
+void Nonogram::fp1()
+{
+    while (true) {
+        propagate();
+        if (m_isComplete) break;
     }
 }

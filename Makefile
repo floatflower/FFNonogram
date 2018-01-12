@@ -52,12 +52,14 @@ SOURCES       = main.cpp \
 		nonogram.cpp \
 		linesolver.cpp \
 		inputreader.cpp \
-		worklist.cpp 
+		worklist.cpp \
+		fixcache.cpp 
 OBJECTS       = main.o \
 		nonogram.o \
 		linesolver.o \
 		inputreader.o \
-		worklist.o
+		worklist.o \
+		fixcache.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -113,11 +115,13 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		linesolver.h \
 		inputreader.h \
 		macro.h \
-		worklist.h main.cpp \
+		worklist.h \
+		fixcache.h main.cpp \
 		nonogram.cpp \
 		linesolver.cpp \
 		inputreader.cpp \
-		worklist.cpp
+		worklist.cpp \
+		fixcache.cpp
 QMAKE_TARGET  = ffnonogram
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = ffnonogram
@@ -295,15 +299,20 @@ compiler_clean:
 
 main.o: main.cpp nonogram.h \
 		linesolver.h \
-		inputreader.h
+		fixcache.h \
+		inputreader.h \
+		worklist.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 nonogram.o: nonogram.cpp nonogram.h \
 		linesolver.h \
-		macro.h
+		fixcache.h \
+		macro.h \
+		worklist.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o nonogram.o nonogram.cpp
 
 linesolver.o: linesolver.cpp linesolver.h \
+		fixcache.h \
 		macro.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o linesolver.o linesolver.cpp
 
@@ -311,8 +320,12 @@ inputreader.o: inputreader.cpp inputreader.h \
 		macro.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o inputreader.o inputreader.cpp
 
-worklist.o: worklist.cpp worklist.h
+worklist.o: worklist.cpp worklist.h \
+		macro.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o worklist.o worklist.cpp
+
+fixcache.o: fixcache.cpp fixcache.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o fixcache.o fixcache.cpp
 
 ####### Install
 

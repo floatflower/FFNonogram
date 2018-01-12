@@ -3,11 +3,14 @@
 
 #include <vector>
 
+#include "fixcache.h"
+
 class LineSolver {
 public:
 	
 	LineSolver();
 	~LineSolver();
+    void init();
     bool sovle(unsigned int &definedLine, unsigned int &valueLine);
 
     bool paint(int i, int j, unsigned int &definedLine, unsigned int &valueLine);
@@ -27,10 +30,14 @@ public:
 
     void printLine(unsigned int definedLine, unsigned int valueLine);
     void printBit(unsigned int data);
+    bool isCompleted() { return m_complete; }
 private:
     std::vector<short> m_options;
     int m_definedLine;
     int m_valueLine;
+    bool m_complete;
+    FixCache m_fix1Cache;
+    FixCache m_fix0Cache;
 };
 
 #endif LINESOVER_H
