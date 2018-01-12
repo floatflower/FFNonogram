@@ -14,6 +14,7 @@ WorkList::WorkList()
 WorkList::~WorkList()
 {
 	delete [] m_queued;
+	delete [] m_statusTable;
 }
 
 void WorkList::init()
