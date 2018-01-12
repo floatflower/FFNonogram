@@ -15,14 +15,4 @@ int main(int argc, char **argv) {
         n.setOption(reader.next());
         n.run();
     }
-
-    /*unsigned int definedLine = 0;
-    unsigned int valueLine = 0;
-    std::vector<short> options;
-    options.push_back(1);
-    options.push_back(1);
-    LineSolver solver;
-    solver.setOptions(options);
-    solver.sovle(definedLine, valueLine);
-    solver.printLine(definedLine, valueLine);*/
 }

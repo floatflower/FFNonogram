@@ -14,6 +14,13 @@ public:
     void setOption(std::vector<std::vector<short>> options);
     void run();
     void propagate();
+    void getColumn(int index, unsigned int &definedLine, unsigned int &valueLine);
+    void setColumn(int index, unsigned int definedLine, unsigned int valueLine);
+    void printPlayGround();
+    void setPlayGround(unsigned int *definedLine, unsigned int *valueLine) {
+    	m_definedPlayGround = definedLine;
+    	m_valuePlayGround = valueLine;
+    }
 private:
 
 	unsigned int *m_definedPlayGround;

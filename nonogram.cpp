@@ -47,21 +47,66 @@ void Nonogram::setOption(std::vector<std::vector<short>> options)
 void Nonogram::run()
 {
     propagate();
-    std::cout << "---------------------" << std::endl;
+    std::cout << "=========================================================================" << std::endl;
 }
 
 void Nonogram::propagate()
 {
     // Do init playground rows
     // pass 1 ~ playground size
-    for (int i = 0; i < PLAYGROUND_SIZE; i ++) {
-        m_solver.setOptions(m_options.at(i));
-        m_solver.sovle(this->m_definedPlayGround[i], this->m_valuePlayGround[i]);
-        m_solver.printLine(this->m_definedPlayGround[i], this->m_valuePlayGround[i]);
+    for (int i = 0; i < INPUTDATA_ROWS; i ++) {
+        if (i < PLAYGROUND_SIZE) {
+            m_solver.setOptions(m_options.at(i));
+            m_solver.sovle(this->m_definedPlayGround[i], this->m_valuePlayGround[i]);
+        }
+        else {
+            m_solver.setOptions(m_options.at(i));
+            unsigned int definedLine;
+            unsigned int valueLine;
+            getColumn(i, definedLine, valueLine);
+            m_solver.sovle(definedLine, valueLine);
+            setColumn(i, definedLine, valueLine);
+        }
+
     }
+    printPlayGround();
     // flips
     // Do playground columns
     // flips back
 
     // Start to solve workList
+}
+
+void Nonogram::getColumn(int index, unsigned int &definedLine, unsigned int &valueLine)
+{
+    definedLine = valueLine = 0;
+    int tmp_index = index - PLAYGROUND_SIZE;
+    for (int i = 0; i < PLAYGROUND_SIZE; i ++) {
+        if (GET_BIT(this->m_definedPlayGround[i], tmp_index)) {
+            definedLine |= bitGetter[i];
+        }
+        if (GET_BIT(this->m_valuePlayGround[i], tmp_index)) {
+            valueLine |= bitGetter[i];
+        }
+    }
+}
+
+void Nonogram::setColumn(int index, unsigned int definedLine, unsigned int valueLine)
+{
+    int tmp_index = index - PLAYGROUND_SIZE;
+    for (int i = 0; i < PLAYGROUND_SIZE; i ++) {
+        if (GET_BIT(definedLine, i)) {
+            this->m_definedPlayGround[i] |= bitGetter[tmp_index];
+        }
+        if (GET_BIT(valueLine, i)) {
+            this->m_valuePlayGround[i] |= bitGetter[tmp_index];
+        }
+    }
+}
+
+void Nonogram::printPlayGround()
+{
+    for (int i = 0; i < PLAYGROUND_SIZE; i ++) {
+        m_solver.printLine(this->m_definedPlayGround[i], this->m_valuePlayGround[i]);
+    }
 }
