@@ -22,8 +22,6 @@ public:
     void probe(PlayGround &playGround, int row, int col);
 private:
 
-	unsigned int *m_definedPlayGround;
-	unsigned int *m_valuePlayGround;
     std::vector<std::vector<short>> m_options;
     LineSolver m_solver;
     PlayGround m_playGround;

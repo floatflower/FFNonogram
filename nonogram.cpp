@@ -76,7 +76,14 @@ void Nonogram::fp1(PlayGround &playGround)
     while(playGround.workList()->hasUnsolved()) {
         propagate(playGround); 
         
-        if (playGround.isConflict() || playGround.isSolved()) {
+        if (playGround.isConflict()) {
+            std::cout << "Conflict" << std::endl;
+            playGround.print();
+            return;
+        }
+        if (playGround.isSolved()) {
+            std::cout << "Solved" << std::endl;
+            playGround.print();
             return;
         }
         
