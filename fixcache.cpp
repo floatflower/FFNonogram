@@ -1,5 +1,8 @@
 #include "fixcache.h"
 
+#include <iostream>
+
+#include "macro.h"
 
 /**
  * 簡單來說就是把兩個cache區塊疊在一起，只有當hasResult回傳true的時候才有必要call fixResult()
@@ -8,13 +11,13 @@
  */
 FixCache::FixCache()
 {
-	this->m_definedTable = new unsigned int [26];
-	this->m_fixTable = new unsigned int [26];
+	this->m_definedTable = new unsigned int [PLAYGROUND_SIZE + 1];
+	this->m_fixTable = new unsigned int [PLAYGROUND_SIZE + 1];
 }
 
 void FixCache::init()
 {
-	for (int i = 0; i < 26; i ++) {
+	for (int i = 0; i < PLAYGROUND_SIZE + 1; i ++) {
 		this->m_definedTable[i] = 0;
 		this->m_fixTable[i] = 0;
 	}
@@ -34,6 +37,8 @@ FixCache::~FixCache()
  */
 void FixCache::setFixResult(int row, int col, bool result)
 {
+	row --;
+	col --;
 	if (row < 0 || col < 0) return;
 	unsigned int offset = 1;
 	offset <<= col;
@@ -56,6 +61,8 @@ void FixCache::setFixResult(int row, int col, bool result)
  */
 bool FixCache::hasResult(int row, int col)
 {
+	row --;
+	col --;
 	if (row < 0 || col < 0) return false;
 	unsigned int record = this->m_definedTable[row];
 	
@@ -64,6 +71,8 @@ bool FixCache::hasResult(int row, int col)
 
 bool FixCache::fixResult(int row, int col)
 {
+	row --;
+	col --;
 	unsigned int record = this->m_fixTable[row];
 
 	return ((record >> col) & 1);

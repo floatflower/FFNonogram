@@ -119,7 +119,7 @@ void PlayGround::setLine(int index, unsigned int definedLine, unsigned int value
 		}
 	}
 	
-	if ((definedLine & completeChecker[PLAYGROUND_SIZE]) == definedLine) {
+	if ((definedLine | completeChecker[PLAYGROUND_SIZE]) == 0xFFFFFFFF) {
 		m_workList.setSolved(index);
 	}
 	else {
@@ -132,6 +132,49 @@ void PlayGround::setLine(int index, unsigned int definedLine, unsigned int value
 	}
 	else {
 		setColumn(index, definedLine, valueLine);
+	}
+}
+
+void setBit(int ver, int hor, bool painted)
+{
+	// vertical is the index of integer
+	// horizon is the index of bit
+
+	ver --;
+	hor --;
+	this->m_definedPlayGround[ver] |= bitGetter[hor];
+
+	if (painted)
+		this->m_valuePlayGround[ver] |= bitGetter[hor];
+	else
+		this->m_valuePlayGround[ver] &= bitCancel[hor];
+}
+
+void merge(PlayGround &playGround0, PlayGround &playGround1)
+{
+	for (int lineNumber = 1; lineNumber <= PLAYGROUND_SIZE; lineNumber ++) {
+		
+		unsigned int currentLine0DefinedLine;
+		unsigned int currentLine0ValueLine;
+		unsigned int currentLine1DefinedLine;
+		unsigned int currentLine1ValueLine;
+		
+		for (int bitIndex = 0; bitIndex < PLAYGROUND_SIZE; bitIndex ++) {
+				
+			playGround0.getLine(lineNumber, currentLine0DefinedLine, currentLine0ValueLine);
+			playGround1.getLine(lineNumber, currentLine1DefinedLine, currentLine1ValueLine);
+
+			currentLine0DefinedLine &= currentLine1DefinedLine;
+
+			if (GET_BIT(currentLine0DefinedLine, bitIndex)) {
+				if (!(GET_BIT(currentLine0ValueLine, bitIndex) ^ GET_BIT(currentLine0ValueLine, bitIndex))) {
+					currentLine0ValueLine |= bitGetter[bitIndex];
+				}
+			}
+
+		}
+
+		playGround0.setLine(lineNumber, currentLine0DefinedLine, currentLine0ValueLine);
 	}
 }
 
@@ -162,12 +205,23 @@ void PlayGround::setConflict()
 	m_status = PlayGround::CONFLICT;
 }
 
+void PlayGround::setIncomplete()
+{
+	m_status = PlayGround::INCOMPLETE;
+}
+
 bool PlayGround::isSolved()
 {
-	return m_status == PlayGround::SOLVED;
+	return (!m_workList.hasUnsolved());
 }
 
 bool PlayGround::isConflict()
 {
 	return m_status == PlayGround::CONFLICT;
 }
+
+bool PlayGround::isIncomplete()
+{
+	return m_status == PlayGround::INCOMPLETE;
+}
+

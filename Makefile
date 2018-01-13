@@ -330,7 +330,8 @@ worklist.o: worklist.cpp worklist.h \
 		macro.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o worklist.o worklist.cpp
 
-fixcache.o: fixcache.cpp fixcache.h
+fixcache.o: fixcache.cpp fixcache.h \
+		macro.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o fixcache.o fixcache.cpp
 
 playground.o: playground.cpp playground.h \

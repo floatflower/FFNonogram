@@ -24,7 +24,7 @@ public:
     void setSolved(int lineNumber);
 
     void printWorkList();
-    bool hasUnsolved() { return m_unsolvedCount > 0; }
+    bool hasUnsolved();
     /**
 	 * instance(), WorkList object is a singleton.
 	 * 
@@ -35,7 +35,6 @@ private:
 	short *m_queued;
 	short m_head;
 	short m_tail;
-	short m_unsolvedCount;
 };
 
 #endif // WORKLIST_H

@@ -5,7 +5,6 @@
 #include "macro.h"
 
 WorkList::WorkList()
-	: m_unsolvedCount(0)
 {
 
 }
@@ -89,7 +88,6 @@ void WorkList::setQueued(int lineNumber)
 {
 	// lineNumber --;
 
-	if (m_statusTable[lineNumber == WorkList::UNSOLVED]) m_unsolvedCount --;
 	if (m_statusTable[lineNumber] != WorkList::QUEUED) {
 
 		m_statusTable[lineNumber] = WorkList::QUEUED;
@@ -100,10 +98,10 @@ void WorkList::setQueued(int lineNumber)
 
 }
 
+
 void WorkList::setSolved(int lineNumber)
 {
 	// lineNumber --;
-	if (m_statusTable[lineNumber == WorkList::UNSOLVED]) m_unsolvedCount --;
 	m_statusTable[lineNumber] = WorkList::SOLVED;
 }
 
@@ -111,8 +109,18 @@ void WorkList::setUnsolved(int lineNumber) {
 	
 	// lineNumber --;
 	m_statusTable[lineNumber] = WorkList::UNSOLVED;
-	m_unsolvedCount ++;
+	
 
+}
+
+bool WorkList::hasUnsolved()
+{
+	for (int i = 0; i < INPUTDATA_ROWS; i ++) {
+		if (m_statusTable[i] == WorkList::UNSOLVED) {
+			return true;
+		}
+	}
+	return hasNext();
 }
 
 void WorkList::printWorkList()
@@ -122,15 +130,15 @@ void WorkList::printWorkList()
 		std::cout << m_queued[start] + 1 << " ";
 	}
 	std::cout << std::endl;
-	std::cout << m_unsolvedCount << " Unsolved: " << std::endl;
-	for (short i = 0; i <= INPUTDATA_ROWS; i ++) {
+	std::cout << "Unsolved: " << std::endl;
+	for (short i = 0; i < INPUTDATA_ROWS; i ++) {
 		if (m_statusTable[i] == WorkList::UNSOLVED) {
 			std::cout << i << " ";
 		}
 	}
 	std::cout << std::endl;
-	std::cout << m_unsolvedCount << " Solved: " << std::endl;
-	for (short i = 0; i <= INPUTDATA_ROWS; i ++) {
+	std::cout << "Solved: " << std::endl;
+	for (short i = 0; i < INPUTDATA_ROWS; i ++) {
 		if (m_statusTable[i] == WorkList::SOLVED) {
 			std::cout << i << " ";
 		}

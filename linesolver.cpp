@@ -31,13 +31,13 @@ bool LineSolver::sovle(unsigned int &definedLine, unsigned int &valueLine)
     bool result = paint(lineLength, optionsAmount, tmp_definedLine, tmp_valueLine);
     definedLine = tmp_definedLine;
     valueLine = tmp_valueLine;
-    m_complete = ((definedLine | completeChecker[PLAYGROUND_SIZE]) == 0xFFFFFFFF);
     return result;
 }
 
 bool LineSolver::paint(int i, int j, unsigned int &definedLine, unsigned int &valueLine)
 {
     // std::cout << "paint(" << i << ", " << j << ");" << std::endl;
+    //std::cout << i << std::endl;
     if (i == 0) return true;
 
     return paintp(i, j, definedLine, valueLine);
@@ -118,32 +118,30 @@ bool LineSolver::fix(int i, int j, unsigned int definedLine, unsigned int valueL
     // std::cout << "fix(" << i << ", " << j << ");" << std::endl;
     if (i == 0 && j == 0) return true;
     if (i == 0 && j >= 1) return false;
-    if (i < 0) return false;
+    // if (i > PLAYGROUND_SIZE) std::cout << "What the hell? " << i << std::endl;
+
+    bool fix0Result;
+    if (m_fix0Cache.hasResult(i, j)) {
+        fix0Result = m_fix0Cache.fixResult(i, j);
+    }
     else {
+        fix0Result = fix0(i, j, definedLine, valueLine);
+        m_fix0Cache.setFixResult(i, j, fix0Result);    
+    }
 
-	    bool fix0Result;
-        if (m_fix0Cache.hasResult(i, j)) {
-            fix0Result = m_fix0Cache.fixResult(i, j);
-        }
-        else {
-            fix0Result = fix0(i, j, definedLine, valueLine);
-            m_fix0Cache.setFixResult(i, j, fix0Result);    
-        }
+ 	// std::cout << "fix0(" << i << ", " << j << ") = " << fix0Result << std::endl;   
 
-	 	// std::cout << "fix0(" << i << ", " << j << ") = " << fix0Result << std::endl;   
-
-	    bool fix1Result;
-        if (m_fix1Cache.hasResult(i, j)) {
-            fix1Result = m_fix1Cache.fixResult(i, j);
-        }
-        else {
-            fix1Result = fix1(i, j, definedLine, valueLine);
-            m_fix1Cache.setFixResult(i, j, fix1Result);       
-        }
-        
-	    // std::cout << "fix1(" << i << ", " << j << ") = " << fix1Result << std::endl;   	
-	    return fix0Result || fix1Result;
-    } 
+    bool fix1Result;
+    if (m_fix1Cache.hasResult(i, j)) {
+        fix1Result = m_fix1Cache.fixResult(i, j);
+    }
+    else {
+        fix1Result = fix1(i, j, definedLine, valueLine);
+        m_fix1Cache.setFixResult(i, j, fix1Result);       
+    }
+    
+    // std::cout << "fix1(" << i << ", " << j << ") = " << fix1Result << std::endl;   	
+    return fix0Result || fix1Result;
 }
 
 bool LineSolver::fix0(int i, int j, unsigned int definedLine, unsigned int valueLine)
@@ -161,7 +159,7 @@ bool LineSolver::fix0(int i, int j, unsigned int definedLine, unsigned int value
 
 bool LineSolver::fix1(int i, int j, unsigned int definedLine, unsigned int valueLine)
 {
-    // std::cout << "fix1(" << i << ", " << j << ");" << std::endl;
+    //std::cout << "fix1(" << i << ", " << j << ");" << std::endl;
     if (j == 0) return false;
 
     short currentOption = m_options.at(j - 1);

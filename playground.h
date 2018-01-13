@@ -22,14 +22,18 @@ public:
 
 	void getLine(int index, unsigned int &definedLine, unsigned int &valueLine);
 	void setLine(int index, unsigned int definedLine, unsigned int valueLine);
+	void setBit(int ver, int hor, bool painted);
+	static void merge(PlayGround &playGround0, PlayGround &playGround1);
 
 	void print();
 
 	void setSolved();
 	void setConflict();
+	void setIncomplete();
 
 	bool isSolved();
 	bool isConflict();
+	bool isIncomplete();
 	WorkList* workList() { return &m_workList; }
 
 private:

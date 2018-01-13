@@ -53,8 +53,15 @@ void Nonogram::propagate(PlayGround &playGround)
         unsigned int definedLine;
         unsigned int valueLine;
         playGround.getLine(lineNumber, definedLine, valueLine);
-        m_solver.sovle(definedLine, valueLine);
+        bool result = m_solver.sovle(definedLine, valueLine);
+        
+        if (!result) {
+            playGround.setConflict();
+            break;
+        }
+
         playGround.setLine(lineNumber, definedLine, valueLine);
+
     }
     playGround.print();
     playGround.workList()->printWorkList();
@@ -63,9 +70,16 @@ void Nonogram::propagate(PlayGround &playGround)
 
 void Nonogram::fp1(PlayGround &playGround)
 {
-    //while(playGround.workList()->hasUnsolved()) {
-        propagate(playGround);    
-    //}
+
+    while(playGround.workList()->hasUnsolved()) {
+        propagate(playGround); 
+        
+        if (playGround.isConflict() || playGround.isSolved()) {
+            return;
+        }
+        
+
+    }
 }
 
 void Nonogram::backtracking(PlayGround &playGround)
