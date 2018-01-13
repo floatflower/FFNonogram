@@ -36,9 +36,12 @@ public:
 	bool isIncomplete();
 	WorkList* workList() { return &m_workList; }
 
+	void getNextUnsolvedPoint(int &ver, int &hor);
+
 private:
 	unsigned int *m_definedPlayGround;
 	unsigned int *m_valuePlayGround;
+	bool **m_solvedTable; // false means unsolved, true means solved
 	PlayGround::STATUS m_status;
 
 	WorkList m_workList;

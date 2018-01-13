@@ -19,6 +19,7 @@ public:
     void setColumn(int index, unsigned int definedLine, unsigned int valueLine);
     void fp1(PlayGround &playGround);
     void backtracking(PlayGround &playGround);
+    void probe(PlayGround &playGround, int row, int col);
 private:
 
 	unsigned int *m_definedPlayGround;

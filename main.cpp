@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
    	s.setOptions(options);
    	unsigned int a = 0x80000000;
    	unsigned int b = 0x80000000;
-	s.printLine(a, b);
+	  s.printLine(a, b);
    	s.sovle(a, b);
    	s.printLine(a, b);*/
 }
