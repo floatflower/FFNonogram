@@ -13,6 +13,7 @@ public:
     WorkList();
     ~WorkList();
 
+    void copy(const WorkList &workList);
     void init();
     
     bool hasNext();
@@ -23,19 +24,18 @@ public:
     void setSolved(int lineNumber);
 
     void printWorkList();
+    bool hasUnsolved() { return m_unsolvedCount > 0; }
     /**
 	 * instance(), WorkList object is a singleton.
 	 * 
 	 * @return WorkList*
 	 */
-    static WorkList* instance();
 private:
-
-	static WorkList* m_instance;
 	WorkList::STATUS *m_statusTable;
 	short *m_queued;
 	short m_head;
 	short m_tail;
+	short m_unsolvedCount;
 };
 
 #endif // WORKLIST_H

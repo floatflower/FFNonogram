@@ -88,7 +88,9 @@ void LineSolver::paint0(int i, int j, unsigned int &definedLine, unsigned int &v
     * Because all of bits have been set to 0 at initial stage,
     * So, just set defined row to 1.
     */
-    // std::cout << "paint0(" << i << ", " << j << ");" << std::endl;
+    
+    //std::cout << "paint0(" << i << ", " << j << ");" << std::endl;
+    
     definedLine |= bitGetter[i - 1];
     paint(i - 1, j, definedLine, valueLine);
 }
@@ -96,6 +98,7 @@ void LineSolver::paint0(int i, int j, unsigned int &definedLine, unsigned int &v
 void LineSolver::paint1(int i, int j, unsigned int &definedLine, unsigned int &valueLine)
 {
     // std::cout << "paint1(" << i << ", " << j << ");" << std::endl;
+
     int option = m_options.at(j - 1);
     for (int k = i - 1; k >= i - option; k --) {
         definedLine |= bitGetter[k];
@@ -127,7 +130,7 @@ bool LineSolver::fix(int i, int j, unsigned int definedLine, unsigned int valueL
             m_fix0Cache.setFixResult(i, j, fix0Result);    
         }
 
-	 	//std::cout << "fix0(" << i << ", " << j << ") = " << fix0Result << std::endl;   
+	 	// std::cout << "fix0(" << i << ", " << j << ") = " << fix0Result << std::endl;   
 
 	    bool fix1Result;
         if (m_fix1Cache.hasResult(i, j)) {
@@ -138,7 +141,7 @@ bool LineSolver::fix(int i, int j, unsigned int definedLine, unsigned int valueL
             m_fix1Cache.setFixResult(i, j, fix1Result);       
         }
         
-	    //std::cout << "fix1(" << i << ", " << j << ") = " << fix1Result << std::endl;   	
+	    // std::cout << "fix1(" << i << ", " << j << ") = " << fix1Result << std::endl;   	
 	    return fix0Result || fix1Result;
     } 
 }
@@ -148,7 +151,7 @@ bool LineSolver::fix0(int i, int j, unsigned int definedLine, unsigned int value
     // std::cout << "fix0(" << i << ", " << j << ");" << std::endl;
     int prev = i - 1;
     if (!GET_BIT(definedLine, prev) // element not defined
-        || (GET_BIT(definedLine, prev)) && GET_BIT(valueLine, prev)) // element defined but set 0
+        || (GET_BIT(definedLine, prev) && !GET_BIT(valueLine, prev))) // element defined but set 0
     {
         // element not defined
         return fix(prev, j, definedLine, valueLine);
@@ -194,6 +197,7 @@ void LineSolver::merge(unsigned int &targetDefinedLine, unsigned int &targetValu
     // printBit(definedLine1);
     // std::cout << "d0: ";
     // printBit(definedLine0);
+    // std::cout << "targetValueLine: ";
     // printBit(targetValueLine);
     for (int i = 0; i < PLAYGROUND_SIZE; i ++) {
         if ((GET_BIT(definedLine1, i) && GET_BIT(definedLine0, i)) && (!(GET_BIT(valueLine1, i) ^ (GET_BIT(valueLine0, i)))))
@@ -204,6 +208,7 @@ void LineSolver::merge(unsigned int &targetDefinedLine, unsigned int &targetValu
             targetDefinedLine &= bitCancel[i];
         }
     }
+    // std::cout << "targetDefinedLine: ";
     // printBit(targetDefinedLine);
 }
 

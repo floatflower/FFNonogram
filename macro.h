@@ -1,7 +1,7 @@
 #ifndef MACRO_H
 #define MACRO_H
 
-#define PLAYGROUND_SIZE 5
+#define PLAYGROUND_SIZE 25
 #define INPUTDATA_ROWS PLAYGROUND_SIZE*2
 
 const unsigned int bitGetter[32] = {

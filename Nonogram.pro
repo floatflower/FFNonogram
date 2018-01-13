@@ -11,11 +11,13 @@ SOURCES += main.cpp \
 		   linesolver.cpp \
     inputreader.cpp \
     worklist.cpp \
-    fixcache.cpp
+    fixcache.cpp \
+    playground.cpp
 
 HEADERS += nonogram.h \
     linesolver.h \
     inputreader.h \
     macro.h \
     worklist.h \
-    fixcache.h
+    fixcache.h \
+    playground.h

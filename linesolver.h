@@ -40,4 +40,4 @@ private:
     FixCache m_fix0Cache;
 };
 
-#endif LINESOVER_H
+#endif

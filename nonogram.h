@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "linesolver.h"
+#include "playground.h"
 
 class Nonogram {
 
@@ -13,22 +14,18 @@ public:
 	void initPlayGround();
     void setOption(std::vector<std::vector<short>> options);
     void run();
-    void propagate();
+    void propagate(PlayGround &playGround);
     void getColumn(int index, unsigned int &definedLine, unsigned int &valueLine);
     void setColumn(int index, unsigned int definedLine, unsigned int valueLine);
-    void printPlayGround();
-    void setPlayGround(unsigned int *definedLine, unsigned int *valueLine) {
-    	m_definedPlayGround = definedLine;
-    	m_valuePlayGround = valueLine;
-    }
-    void fp1();
+    void fp1(PlayGround &playGround);
+    void backtracking(PlayGround &playGround);
 private:
 
 	unsigned int *m_definedPlayGround;
 	unsigned int *m_valuePlayGround;
     std::vector<std::vector<short>> m_options;
     LineSolver m_solver;
-    bool m_isComplete;
+    PlayGround m_playGround;
 
 };
 

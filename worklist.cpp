@@ -4,9 +4,8 @@
 
 #include "macro.h"
 
-WorkList* WorkList::m_instance = nullptr;
-
 WorkList::WorkList()
+	: m_unsolvedCount(0)
 {
 
 }
@@ -15,6 +14,16 @@ WorkList::~WorkList()
 {
 	delete [] m_queued;
 	delete [] m_statusTable;
+}
+
+void WorkList::copy(const WorkList &workList)
+{
+	for (int i = 0; i < 64; i ++) {
+		this->m_statusTable[i] = workList.m_statusTable[i];
+		this->m_queued[i] = workList.m_queued[i];
+	}
+	this->m_head = workList.m_head;
+	this->m_tail = workList.m_tail;
 }
 
 void WorkList::init()
@@ -49,19 +58,12 @@ void WorkList::init()
 	}
 
 	m_head = 0;
-	std::cout << "Head is at" << m_head << std::endl;
+	// std::cout << "Head is at" << m_head << std::endl;
 
 	// if we have n line then m_tail will be set to n,
 	// for example we have 10 line then m_tail point to m_queued[10]
 	m_tail = INPUTDATA_ROWS;
-	std::cout << "Tail is at" << m_tail << std::endl;
-}
-
-WorkList* WorkList::instance()
-{
-	if (WorkList::m_instance == nullptr) 
-		WorkList::m_instance = new WorkList();
-	return WorkList::m_instance;
+	// std::cout << "Tail is at" << m_tail << std::endl;
 }
 
 /**
@@ -78,40 +80,60 @@ short WorkList::next()
 	m_statusTable[result] = WorkList::UNSOLVED;
 	result ++;
 	m_head = (m_head + 1) & 0x3F;
-	std::cout << "Head is at" << m_head << std::endl;
+	// std::cout << "Head is at" << m_head << std::endl;
 
 	return result;
 }
 
-void WorkList::setUnsolved(int lineNumber)
-{
-	lineNumber --;
-	m_statusTable[lineNumber] = WorkList::UNSOLVED;
-}
-
-// 3
 void WorkList::setQueued(int lineNumber)
 {
-	lineNumber --; // 2
-	if (m_statusTable[lineNumber] != WorkList::QUEUED) { // [2] != Queued
+	// lineNumber --;
 
-		m_statusTable[lineNumber] = WorkList::QUEUED; // [2] = Queued
-		m_queued[m_tail] = lineNumber; // 
+	if (m_statusTable[lineNumber == WorkList::UNSOLVED]) m_unsolvedCount --;
+	if (m_statusTable[lineNumber] != WorkList::QUEUED) {
+
+		m_statusTable[lineNumber] = WorkList::QUEUED;
+		m_queued[m_tail] = lineNumber; 
 		m_tail = (m_tail + 1) & 0x3F;
-		std::cout << "Tail is at" << m_tail << std::endl;
+		// std::cout << "Tail is at" << m_tail << std::endl;
 	}
+
 }
 
 void WorkList::setSolved(int lineNumber)
 {
-	lineNumber --;
+	// lineNumber --;
+	if (m_statusTable[lineNumber == WorkList::UNSOLVED]) m_unsolvedCount --;
 	m_statusTable[lineNumber] = WorkList::SOLVED;
+}
+
+void WorkList::setUnsolved(int lineNumber) {
+	
+	// lineNumber --;
+	m_statusTable[lineNumber] = WorkList::UNSOLVED;
+	m_unsolvedCount ++;
+
 }
 
 void WorkList::printWorkList()
 {
+	std::cout << "Queued: " << std::endl;
 	for (short start = m_head; start != m_tail; start = ((start + 1) & 0x3F)) {
 		std::cout << m_queued[start] + 1 << " ";
+	}
+	std::cout << std::endl;
+	std::cout << m_unsolvedCount << " Unsolved: " << std::endl;
+	for (short i = 0; i <= INPUTDATA_ROWS; i ++) {
+		if (m_statusTable[i] == WorkList::UNSOLVED) {
+			std::cout << i << " ";
+		}
+	}
+	std::cout << std::endl;
+	std::cout << m_unsolvedCount << " Solved: " << std::endl;
+	for (short i = 0; i <= INPUTDATA_ROWS; i ++) {
+		if (m_statusTable[i] == WorkList::SOLVED) {
+			std::cout << i << " ";
+		}
 	}
 	std::cout << std::endl;
 }
