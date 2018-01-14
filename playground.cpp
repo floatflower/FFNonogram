@@ -9,11 +9,6 @@ PlayGround::PlayGround()
 	this->m_definedPlayGround = new unsigned int [PLAYGROUND_SIZE];
 	this->m_valuePlayGround = new unsigned int [PLAYGROUND_SIZE];
 
-	this->m_solvedTable = new bool* [PLAYGROUND_SIZE];
-	for (int i = 0; i < PLAYGROUND_SIZE; i ++) {
-		this->m_solvedTable[i] = new bool [PLAYGROUND_SIZE];
-	}
-
 	init();
 }
 
@@ -24,25 +19,17 @@ void PlayGround::init()
 		this->m_valuePlayGround[i] = 0;
 	}
 	m_workList.init();
-	for (int i = 0; i < PLAYGROUND_SIZE; i ++) {
-		for (int j = 0; j < PLAYGROUND_SIZE; j ++) {
-			m_solvedTable[i][j] = false;
-		}
-	}
+	m_status = INCOMPLETE;
+	m_unsolvedPointSkip = 0;
 }
 
 PlayGround::~PlayGround()
 {
 	delete [] this->m_definedPlayGround;
 	delete [] this->m_valuePlayGround;
-
-	for (int i = 0; i < PLAYGROUND_SIZE; i ++) {
-		delete [] this->m_solvedTable[i];
-	}
-	delete [] this->m_solvedTable;
 }
 
-void PlayGround::copy(PlayGround &playGround)
+void PlayGround::copy(const PlayGround &playGround)
 {
 	for (int i = 0; i < PLAYGROUND_SIZE; i ++) {
 		this->m_definedPlayGround[i] = playGround.m_definedPlayGround[i];
@@ -50,12 +37,7 @@ void PlayGround::copy(PlayGround &playGround)
 	}
 
 	this->m_workList.copy(playGround.m_workList);
-
-	for (int i = 0; i < PLAYGROUND_SIZE; i ++) {
-		for (int j = 0; j < PLAYGROUND_SIZE; j ++) {
-			this->m_solvedTable[i][j] = playGround.m_solvedTable[i][j];
-		}
-	}
+	m_unsolvedPointSkip = playGround.m_unsolvedPointSkip;
 }
 
 void PlayGround::getColumn(int index, unsigned int &definedLine, unsigned int &valueLine)
@@ -149,7 +131,7 @@ void PlayGround::setLine(int index, unsigned int definedLine, unsigned int value
 			if (GET_BIT(prev_definedLine, i)) {
 				// 
 				m_workList.setQueued(offset + i);
-				m_solvedTable[row][col] = true;
+
 			}
 		}
 	}
@@ -179,7 +161,6 @@ void PlayGround::setBit(int row, int col, bool painted)
 	m_workList.setQueued(row);
 	m_workList.setQueued(col + PLAYGROUND_SIZE);
 	this->m_definedPlayGround[row] |= bitGetter[col];
-	m_solvedTable[row][col] = true;
 
 	if (painted)
 		this->m_valuePlayGround[row] |= bitGetter[col];
@@ -196,28 +177,31 @@ void PlayGround::merge(PlayGround &playGround0, PlayGround &playGround1)
 		unsigned int currentLine1DefinedLine;
 		unsigned int currentLine1ValueLine;
 		
-		for (int bitIndex = 0; bitIndex < PLAYGROUND_SIZE; bitIndex ++) {
-				
-			playGround0.getLine(lineNumber, currentLine0DefinedLine, currentLine0ValueLine);
-			playGround1.getLine(lineNumber, currentLine1DefinedLine, currentLine1ValueLine);
+		playGround0.getLine(lineNumber, currentLine0DefinedLine, currentLine0ValueLine);
+		playGround1.getLine(lineNumber, currentLine1DefinedLine, currentLine1ValueLine);
 
-			currentLine0DefinedLine &= currentLine1DefinedLine;
+		currentLine0DefinedLine &= currentLine1DefinedLine;
 
-			if (GET_BIT(currentLine0DefinedLine, bitIndex)) {
-				if (!(GET_BIT(currentLine0ValueLine, bitIndex) ^ GET_BIT(currentLine0ValueLine, bitIndex))) {
+		for (int bitIndex = 0; bitIndex < PLAYGROUND_SIZE; bitIndex ++) {	
+
+			if (GET_BIT(currentLine0DefinedLine, bitIndex)) { // if this element is defined
+				if (!(GET_BIT(currentLine0ValueLine, bitIndex) ^ GET_BIT(currentLine1ValueLine, bitIndex))) {
 					
 					playGround0.m_workList.setQueued(lineNumber - 1);
 					playGround0.m_workList.setQueued(PLAYGROUND_SIZE + bitIndex);
 				
 				}
 				else {
+					
 					currentLine0DefinedLine &= bitCancel[bitIndex];
+
 				}
 			}
 
 		}
 
-		playGround0.setLine(lineNumber, currentLine0DefinedLine, currentLine0ValueLine);
+		playGround0.m_definedPlayGround[lineNumber - 1] = currentLine0DefinedLine;
+		playGround0.m_valuePlayGround[lineNumber - 1] = currentLine0ValueLine;
 	}
 }
 
@@ -238,15 +222,20 @@ void PlayGround::print()
 	}
 
 	std::cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << std::endl;
-
-	for (int i = 0; i <PLAYGROUND_SIZE; i ++) {
+	std::cout << std::endl;
+	/*for (int i = 0; i < PLAYGROUND_SIZE; i ++) {
 		for (int j = 0; j < PLAYGROUND_SIZE; j ++) {
-			std::cout << m_solvedTable[i][j] << "\t";
+			if (GET_BIT(this->m_definedPlayGround[i], j)) {
+				std::cout << "1\t" ;
+			}
+			else {
+				std::cout << "0\t";
+			}
 		}
 		std::cout << std::endl;
 	}
 
-	std::cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << std::endl;
+	std::cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << std::endl;*/
 }
 
 void PlayGround::setSolved()
@@ -281,12 +270,22 @@ bool PlayGround::isIncomplete()
 
 void PlayGround::getNextUnsolvedPoint(int &ver, int &hor)
 {
-	for (int i = 0; i < PLAYGROUND_SIZE; i ++) {
-		for (int j = 0; j < PLAYGROUND_SIZE; j ++) {
-			if (!m_solvedTable[i][j]) {
-				ver = i + 1;
-				hor = j + 1;
-				return;
+	for (int lineNumber = 0; lineNumber < PLAYGROUND_SIZE; lineNumber ++) {
+		int skip = 0;
+		for (int bitIndex = 0; bitIndex < PLAYGROUND_SIZE; bitIndex ++) {
+
+			// if this point unsolved
+			if (!GET_BIT(this->m_definedPlayGround[lineNumber], bitIndex)) {
+				if (m_unsolvedPointSkip == skip) {
+					
+					ver = lineNumber + 1;
+					hor = bitIndex + 1;
+					std::cout << "get unsolved: " << ver << ", " << hor << std::endl;
+					m_unsolvedPointSkip ++;
+					return;
+				}
+
+				skip ++; // skip counter
 			}
 		}
 	}

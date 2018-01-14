@@ -15,7 +15,7 @@ public:
 
 	void init();
 
-	void copy(PlayGround &playGround);
+	void copy(const PlayGround &playGround);
 
 	void getColumn(int index, unsigned int &definedLine, unsigned int &valueLine);
 	void setColumn(int index, unsigned int definedLine, unsigned int valueLine);
@@ -37,14 +37,14 @@ public:
 	WorkList* workList() { return &m_workList; }
 
 	void getNextUnsolvedPoint(int &ver, int &hor);
-
+	void initUnsolvedPointSkip() { m_unsolvedPointSkip = 0; }
 private:
 	unsigned int *m_definedPlayGround;
 	unsigned int *m_valuePlayGround;
-	bool **m_solvedTable; // false means unsolved, true means solved
 	PlayGround::STATUS m_status;
 
 	WorkList m_workList;
+	int m_unsolvedPointSkip;
 };
 
 #endif

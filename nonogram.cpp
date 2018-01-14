@@ -24,11 +24,13 @@ Nonogram::Nonogram()
 
 Nonogram::~Nonogram()
 {
+    std::cout << "Bye" << std::endl;
 }
 
 void Nonogram::initPlayGround()
 {
-	m_playGround.init();
+    m_playGround.init();
+    m_solver.init();
 }
 
 void Nonogram::setOption(std::vector<std::vector<short>> options)
@@ -39,7 +41,7 @@ void Nonogram::setOption(std::vector<std::vector<short>> options)
 void Nonogram::run()
 {
     backtracking(m_playGround);
-    //std::cout << "=========================================================================" << std::endl;
+    std::cout << "=========================================================================" << std::endl;
 }
 
 void Nonogram::propagate(PlayGround &playGround)
@@ -48,18 +50,20 @@ void Nonogram::propagate(PlayGround &playGround)
     // pass 1 ~ playground size
     while(playGround.workList()->hasNext()) {
         m_solver.init();
+
         short lineNumber = playGround.workList()->next();
+        // std::cout << lineNumber << std::endl;
         m_solver.setOptions(m_options.at(lineNumber - 1));
         unsigned int definedLine;
         unsigned int valueLine;
         playGround.getLine(lineNumber, definedLine, valueLine);
         bool result = m_solver.sovle(definedLine, valueLine);
-        
+
         if (!result) {
-            std::cout << "Conflict at: " << lineNumber << std::endl;
-            std::cout << "conflict!!" << std::endl;
+            std::cout << "Propagate conflict at: " << lineNumber << std::endl;
+            m_solver.printLine(definedLine, valueLine);
             playGround.setConflict();
-            break;
+            return;
         }
 
         playGround.setLine(lineNumber, definedLine, valueLine);
@@ -90,6 +94,7 @@ void Nonogram::fp1(PlayGround &playGround)
         int i;
         int j;
         while (true) {
+            playGround.print();
             i = j = -1;
             playGround.getNextUnsolvedPoint(i, j);
             
@@ -100,6 +105,7 @@ void Nonogram::fp1(PlayGround &playGround)
             }
 
             probe(playGround, i, j);
+
             if (playGround.isSolved()) {
                 std::cout << "Solved" << std::endl;
                 playGround.print();
@@ -121,47 +127,63 @@ void Nonogram::backtracking(PlayGround &playGround)
 
 void Nonogram::probe(PlayGround &playGround, int row, int col)
 {
-    // std::cout << "set " << row << ", " << col << std::endl;
+    std::cout << "set " << row << ", " << col << std::endl;
+    //playGround.print();
     PlayGround p0;
     PlayGround p1;
+    p0.init();
+    p1.init();
     p0.copy(playGround);
     p1.copy(playGround);
-    /*std::cout << "P0: " << std::endl;
-    p0.print();
-    std::cout << "P1: " << std::endl;
-    p1.print();*/
+    // std::cout << "P0: " << std::endl;
+    // p0.print();
+    // std::cout << "P1: " << std::endl;
+    // p1.print();
     p0.setBit(row, col, false);
     p1.setBit(row, col, true);
-    /*std::cout << "P0: " << std::endl;
-    p0.print();
-    std::cout << "P1: " << std::endl;
-    p1.print();*/
+    std::cout << "Propagate p0: " << p0.isConflict() << ", Propagate p1: " << p1.isConflict() << std::endl;
+    
+    std::cout << "P0: " << std::endl;
+    // p0.print();
+    
+    // p1.print();
     propagate(p0);
-    propagate(p1);
-    /*std::cout << "P0: " << std::endl;
-    p0.print();
     std::cout << "P1: " << std::endl;
-    p1.print();*/
+    propagate(p1);
+    std::cout << "Propagate p0: " << p0.isConflict() << ", Propagate p1: " << p1.isConflict() << std::endl;
+    // std::cout << "P0: " << std::endl;
+    // p0.print();
+    // std::cout << "P1: " << std::endl;
+    // p1.print();
     /*std::cout << std::endl;
     std::cout << "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS" << std::endl;
     std::cout << std::endl;*/
 
     if (p0.isConflict() && p1.isConflict()) {
-        // std::cout << "all conflict" << std::endl;
+        std::cout << "all conflict" << std::endl;
         playGround.setConflict();
+        return;
     }
     else if (p0.isConflict() && !p1.isConflict()) {
-        // std::cout << "p1" << std::endl;
+        std::cout << "Use p1" << std::endl;
         playGround.copy(p1);
+        playGround.initUnsolvedPointSkip();
+        return;
     }
     else if (p1.isConflict() && !p0.isConflict()) {
-        // std::cout << "p0" << std::endl;
+        std::cout << "Use p0" << std::endl;
         playGround.copy(p0);
+        playGround.initUnsolvedPointSkip();
+        return;
     }
     else {
-        // std::cout << "merge" << std::endl;  
+        std::cout << "merge" << std::endl;
+        std::cout << "P0: " << std::endl;
+        p0.print();
+        std::cout << "P1: " << std::endl;
+        p1.print();
         PlayGround::merge(p0, p1);
         playGround.copy(p0);
-        propagate(playGround);
+        return;
     }
 }

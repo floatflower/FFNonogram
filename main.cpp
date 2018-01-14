@@ -14,7 +14,9 @@ int main(int argc, char **argv) {
     while(reader.hasNext()) {
       Nonogram n;
       n.initPlayGround();
+      
       n.setOption(reader.next());
+
       n.run();
       std::cout << std::endl;
     }
