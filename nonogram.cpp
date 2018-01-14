@@ -91,20 +91,19 @@ void Nonogram::fp1(PlayGround &playGround)
             return;
         }
         
-        int i;
-        int j;
+        int i = -1;
+        int j = -1;
+
+        int firstI = -1;
+        int firstJ = -1;
         while (true) {
             playGround.print();
-            i = j = -1;
             playGround.getNextUnsolvedPoint(i, j);
             
-            if (i == -1 || j == -1) {
-                // no unsolved point;
-                std::cout << "no unsolved points" << std::endl;
+            if (i == -1 && j == -1) {
+                std::cout << "No unsolved point" << std::endl;
                 return;
             }
-
-            probe(playGround, i, j);
 
             if (playGround.isSolved()) {
                 std::cout << "Solved" << std::endl;
@@ -125,7 +124,7 @@ void Nonogram::backtracking(PlayGround &playGround)
     fp1(playGround);
 }
 
-void Nonogram::probe(PlayGround &playGround, int row, int col)
+bool Nonogram::probe(PlayGround &playGround, int row, int col)
 {
     std::cout << "set " << row << ", " << col << std::endl;
     //playGround.print();
@@ -162,19 +161,19 @@ void Nonogram::probe(PlayGround &playGround, int row, int col)
     if (p0.isConflict() && p1.isConflict()) {
         std::cout << "all conflict" << std::endl;
         playGround.setConflict();
-        return;
+        return false;
     }
     else if (p0.isConflict() && !p1.isConflict()) {
         std::cout << "Use p1" << std::endl;
         playGround.copy(p1);
         playGround.initUnsolvedPointSkip();
-        return;
+        return true;
     }
     else if (p1.isConflict() && !p0.isConflict()) {
         std::cout << "Use p0" << std::endl;
         playGround.copy(p0);
         playGround.initUnsolvedPointSkip();
-        return;
+        return true;
     }
     else {
         std::cout << "merge" << std::endl;
@@ -182,8 +181,8 @@ void Nonogram::probe(PlayGround &playGround, int row, int col)
         p0.print();
         std::cout << "P1: " << std::endl;
         p1.print();
-        PlayGround::merge(p0, p1);
+        bool mergeResult = PlayGround::merge(p0, p1);
         playGround.copy(p0);
-        return;
+        return mergeResult;
     }
 }

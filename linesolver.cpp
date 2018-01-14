@@ -93,6 +93,7 @@ void LineSolver::paint0(int i, int j, unsigned int &definedLine, unsigned int &v
     //std::cout << "paint0(" << i << ", " << j << ");" << std::endl;
     
     definedLine |= bitGetter[i - 1];
+    valueLine &= bitCancel[i - 1];
     paint(i - 1, j, definedLine, valueLine);
 }
 
@@ -205,6 +206,7 @@ void LineSolver::merge(unsigned int &targetDefinedLine, unsigned int &targetValu
         }
         else {
             targetDefinedLine &= bitCancel[i];
+            targetValueLine & bitCancel[i];
         }
     }
     // std::cout << "targetDefinedLine: ";

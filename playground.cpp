@@ -168,25 +168,35 @@ void PlayGround::setBit(int row, int col, bool painted)
 		this->m_valuePlayGround[row] &= bitCancel[col];
 }
 
-void PlayGround::merge(PlayGround &playGround0, PlayGround &playGround1)
+bool PlayGround::merge(PlayGround &playGround0, PlayGround &playGround1)
 {
+	bool change = false;
 	for (int lineNumber = 1; lineNumber <= PLAYGROUND_SIZE; lineNumber ++) {
 		
-		unsigned int currentLine0DefinedLine;
-		unsigned int currentLine0ValueLine;
-		unsigned int currentLine1DefinedLine;
-		unsigned int currentLine1ValueLine;
+		unsigned int currentLine0DefinedLine = 0;
+		unsigned int currentLine0ValueLine = 0;
+		unsigned int currentLine1DefinedLine = 0;
+		unsigned int currentLine1ValueLine = 0;
 		
 		playGround0.getLine(lineNumber, currentLine0DefinedLine, currentLine0ValueLine);
 		playGround1.getLine(lineNumber, currentLine1DefinedLine, currentLine1ValueLine);
 
+		/**
+		* currentLine0DefinedLine 1 0 1 0 1 0 1 1 1
+		* currentLine1DefinedLine 1 0 1 1 0 1 0 1 1
+		* and operation           1 0 1 0 0 0 0 1 1 <- if bit is one, that means two data being defined.
+		*/
 		currentLine0DefinedLine &= currentLine1DefinedLine;
 
 		for (int bitIndex = 0; bitIndex < PLAYGROUND_SIZE; bitIndex ++) {	
 
-			if (GET_BIT(currentLine0DefinedLine, bitIndex)) { // if this element is defined
+			// if the index of this line is defined
+			if (GET_BIT(currentLine0DefinedLine, bitIndex)) {
+
+				// if two value has same data, do nothing but push this index to queue.
 				if (!(GET_BIT(currentLine0ValueLine, bitIndex) ^ GET_BIT(currentLine1ValueLine, bitIndex))) {
 					
+					change = true;
 					playGround0.m_workList.setQueued(lineNumber - 1);
 					playGround0.m_workList.setQueued(PLAYGROUND_SIZE + bitIndex);
 				
@@ -194,6 +204,7 @@ void PlayGround::merge(PlayGround &playGround0, PlayGround &playGround1)
 				else {
 					
 					currentLine0DefinedLine &= bitCancel[bitIndex];
+					currentLine0ValueLine &= bitCancel[bitIndex];
 
 				}
 			}
@@ -203,6 +214,7 @@ void PlayGround::merge(PlayGround &playGround0, PlayGround &playGround1)
 		playGround0.m_definedPlayGround[lineNumber - 1] = currentLine0DefinedLine;
 		playGround0.m_valuePlayGround[lineNumber - 1] = currentLine0ValueLine;
 	}
+	return change;
 }
 
 void PlayGround::print()
@@ -270,8 +282,9 @@ bool PlayGround::isIncomplete()
 
 void PlayGround::getNextUnsolvedPoint(int &ver, int &hor)
 {
+	int skip = 0;
 	for (int lineNumber = 0; lineNumber < PLAYGROUND_SIZE; lineNumber ++) {
-		int skip = 0;
+		
 		for (int bitIndex = 0; bitIndex < PLAYGROUND_SIZE; bitIndex ++) {
 
 			// if this point unsolved
@@ -289,4 +302,6 @@ void PlayGround::getNextUnsolvedPoint(int &ver, int &hor)
 			}
 		}
 	}
+	ver = -1;
+	hor = -1;
 }

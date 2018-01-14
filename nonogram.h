@@ -19,7 +19,7 @@ public:
     void setColumn(int index, unsigned int definedLine, unsigned int valueLine);
     void fp1(PlayGround &playGround);
     void backtracking(PlayGround &playGround);
-    void probe(PlayGround &playGround, int row, int col);
+    bool probe(PlayGround &playGround, int row, int col);
 private:
 
     std::vector<std::vector<short>> m_options;
