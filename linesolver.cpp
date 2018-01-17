@@ -24,7 +24,7 @@ void LineSolver::init()
 
 bool LineSolver::sovle(unsigned int &definedLine, unsigned int &valueLine)
 {
-    if (definedLine & completeChecker[PLAYGROUND_SIZE] == true) return true;
+    if ((definedLine & completeChecker[PLAYGROUND_SIZE]) == 0xFFFFFF) return true;
     int lineLength = PLAYGROUND_SIZE;
     int optionsAmount = m_options.size();
     unsigned int tmp_definedLine = definedLine;
@@ -110,6 +110,7 @@ void LineSolver::paint1(int i, int j, unsigned int &definedLine, unsigned int &v
     if (i > 0) {
         i -= 1;
         definedLine |= bitGetter[i];
+        valueLine &= bitCancel[i];
     }
     j -= 1;
     paint(i, j, definedLine, valueLine);
@@ -206,7 +207,7 @@ void LineSolver::merge(unsigned int &targetDefinedLine, unsigned int &targetValu
         }
         else {
             targetDefinedLine &= bitCancel[i];
-            targetValueLine & bitCancel[i];
+            targetValueLine &= bitCancel[i];
         }
     }
     // std::cout << "targetDefinedLine: ";

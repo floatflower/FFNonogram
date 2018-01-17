@@ -37,14 +37,26 @@ public:
 	WorkList* workList() { return &m_workList; }
 
 	void getNextUnsolvedPoint(int &ver, int &hor);
-	void initUnsolvedPointSkip() { m_unsolvedPointSkip = 0; }
+	void getFirstUnsolvedPoint(int &ver, int &hor) 
+	{ 
+		ver = m_firstUnsolvedI; 
+		hor = m_firstUnsolvedJ; 
+	}
+	
+	void initUnsolvedPointSkip();
+	int m_unsolvedPointSkip;
 private:
 	unsigned int *m_definedPlayGround;
 	unsigned int *m_valuePlayGround;
 	PlayGround::STATUS m_status;
-
 	WorkList m_workList;
-	int m_unsolvedPointSkip;
+
+	int m_unsolvedLineIndex;
+	int m_unsolvedPointIndex;
+
+	int m_firstUnsolvedI;
+	int m_firstUnsolvedJ;
+	
 };
 
 #endif

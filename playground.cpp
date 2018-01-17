@@ -21,6 +21,8 @@ void PlayGround::init()
 	m_workList.init();
 	m_status = INCOMPLETE;
 	m_unsolvedPointSkip = 0;
+	m_unsolvedLineIndex = 0;
+	m_unsolvedPointIndex = 0;
 }
 
 PlayGround::~PlayGround()
@@ -37,6 +39,8 @@ void PlayGround::copy(const PlayGround &playGround)
 	}
 
 	this->m_workList.copy(playGround.m_workList);
+	m_unsolvedPointSkip = playGround.m_unsolvedPointSkip;
+	m_unsolvedLineIndex = playGround.m_unsolvedLineIndex;
 	m_unsolvedPointSkip = playGround.m_unsolvedPointSkip;
 }
 
@@ -280,27 +284,40 @@ bool PlayGround::isIncomplete()
 	return m_status == PlayGround::INCOMPLETE;
 }
 
+void PlayGround::initUnsolvedPointSkip()
+{
+	m_unsolvedPointSkip = 0;
+}
+
 void PlayGround::getNextUnsolvedPoint(int &ver, int &hor)
 {
-	int skip = 0;
+
+	int skipCounter = 0;
+
 	for (int lineNumber = 0; lineNumber < PLAYGROUND_SIZE; lineNumber ++) {
 		
 		for (int bitIndex = 0; bitIndex < PLAYGROUND_SIZE; bitIndex ++) {
 
 			// if this point unsolved
 			if (!GET_BIT(this->m_definedPlayGround[lineNumber], bitIndex)) {
-				if (m_unsolvedPointSkip == skip) {
-					
+				if (skipCounter == 0) {
+					m_firstUnsolvedI = lineNumber + 1;
+					m_firstUnsolvedJ = bitIndex + 1;
+				}
+				if (skipCounter == m_unsolvedPointSkip) {
 					ver = lineNumber + 1;
 					hor = bitIndex + 1;
-					std::cout << "get unsolved: " << ver << ", " << hor << std::endl;
 					m_unsolvedPointSkip ++;
+					//std::cout << "get unsolved: " << ver << ", " << hor << std::endl;
 					return;
 				}
 
-				skip ++; // skip counter
+				skipCounter ++;
+
 			}
+
 		}
+
 	}
 	ver = -1;
 	hor = -1;
