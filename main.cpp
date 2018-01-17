@@ -13,16 +13,14 @@ int main(int argc, char **argv) {
     InputReader reader(inputFileName);
     reader.readData();
     Nonogram n; 
-    time_t start;
-    time_t end;
+    
+    int questionNumber = 1;
     while(reader.hasNext()) {  
-
-      start = time(NULL);
-
+      
       n.initPlayGround();
       n.setOption(reader.next());
-      n.run();
-      end = time(NULL);
-      std::cout << "Time: " << end - start << std::endl;
+      n.run(questionNumber);
+      questionNumber ++;
+
     }
 }

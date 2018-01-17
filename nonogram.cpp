@@ -38,10 +38,20 @@ void Nonogram::setOption(std::vector<std::vector<short>> options)
     m_options = options;
 }
 
-void Nonogram::run()
+void Nonogram::run(int questionNumber)
 {
+    time_t start;
+    time_t end;
+    start = time(NULL);
     backtracking(m_playGround);
-    // std::cout << "=========================================================================" << std::endl;
+    end = time(NULL);
+    if (m_playGround.isSolved()) {
+        std::cout << "Question " << questionNumber << " Status: Solved! Time: " << end - start << std::endl;
+    } 
+    if (m_playGround.isConflict()) {
+        std::cout << "Question " << questionNumber << " Status: Conflict! Time: " << end - start << std::endl;
+    }
+
 }
 
 void Nonogram::propagate(PlayGround &playGround)
@@ -81,12 +91,10 @@ void Nonogram::fp1(PlayGround &playGround)
         propagate(playGround); 
         
         if (playGround.isConflict()) {
-            std::cout << "Conflict" << std::endl;
-            // playGround.print();
+            playGround.print();
             return;
         }
         if (playGround.isSolved()) {
-            std::cout << "Solved" << std::endl;
             // playGround.print();
             return;
         }
@@ -99,7 +107,6 @@ void Nonogram::fp1(PlayGround &playGround)
             playGround.getNextUnsolvedPoint(i, j);
             
             if (i == -1 && j == -1) {
-                std::cout << "No unsolved point" << std::endl;
                 return;
             }
 
@@ -110,12 +117,10 @@ void Nonogram::fp1(PlayGround &playGround)
             // if get new point painted
 
             if (playGround.isSolved()) {
-                std::cout << "Solved" << std::endl;
                 // playGround.print();
                 return;
             } else if (playGround.isConflict()) {
-                std::cout << "Conflict" << std::endl;
-                // playGround.print();
+                playGround.print();
                 return;
             }
         }
@@ -126,6 +131,36 @@ void Nonogram::fp1(PlayGround &playGround)
 void Nonogram::backtracking(PlayGround &playGround)
 {
     fp1(playGround);
+
+    if (playGround.isSolved() || playGround.isConflict()) {
+        return;
+    }
+
+    int unsolvedI;
+    int unsolvedJ;
+    playGround.initUnsolvedPointSkip();
+    playGround.getNextUnsolvedPoint(unsolvedI, unsolvedJ);
+
+    PlayGround newPlayGround;
+    newPlayGround.init();
+    newPlayGround.copy(playGround);
+    newPlayGround.setBit(unsolvedI, unsolvedJ, false);
+    backtracking(newPlayGround);
+
+    if (newPlayGround.isSolved()) {
+        playGround.copy(newPlayGround);
+        return;
+    }
+
+    newPlayGround.init();
+    newPlayGround.copy(playGround);
+    newPlayGround.setBit(unsolvedI, unsolvedJ, true);
+
+    backtracking(newPlayGround);
+
+    playGround.copy(newPlayGround);
+    return;
+
 }
 
 bool Nonogram::probe(PlayGround &playGround, int row, int col)

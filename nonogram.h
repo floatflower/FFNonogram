@@ -13,7 +13,7 @@ public:
 	~Nonogram();
 	void initPlayGround();
     void setOption(std::vector<std::vector<short>> options);
-    void run();
+    void run(int questionNumber);
     void propagate(PlayGround &playGround);
     void getColumn(int index, unsigned int &definedLine, unsigned int &valueLine);
     void setColumn(int index, unsigned int definedLine, unsigned int valueLine);

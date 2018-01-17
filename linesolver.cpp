@@ -24,7 +24,6 @@ void LineSolver::init()
 
 bool LineSolver::sovle(unsigned int &definedLine, unsigned int &valueLine)
 {
-    if ((definedLine & completeChecker[PLAYGROUND_SIZE]) == 0xFFFFFF) return true;
     int lineLength = PLAYGROUND_SIZE;
     int optionsAmount = m_options.size();
     unsigned int tmp_definedLine = definedLine;

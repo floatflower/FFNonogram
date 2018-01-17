@@ -65,8 +65,14 @@ void PlayGround::setColumn(int index, unsigned int definedLine, unsigned int val
         if (GET_BIT(definedLine, i)) {
             this->m_definedPlayGround[i] |= bitGetter[tmp_index];
         }
+        else {
+        	this->m_definedPlayGround[i] &= bitCancel[tmp_index];	
+        }
         if (GET_BIT(valueLine, i)) {
             this->m_valuePlayGround[i] |= bitGetter[tmp_index];
+        }
+        else {
+        	this->m_valuePlayGround[i] &= bitCancel[tmp_index];	
         }
     }
 }
